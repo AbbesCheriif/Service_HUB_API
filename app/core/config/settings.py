@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     APP_HOST: str = "0.0.0.0"
     APP_PORT: int = 8000
     DEBUG: bool = True
+    LOG_LEVEL: str = "INFO"
 
     DATABASE_URL: str = "postgresql+asyncpg://postgres:password@localhost:5432/servicehub"
     REDIS_URL: str = "redis://localhost:6379/0"
