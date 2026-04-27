@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from app.api.exception_handlers import domain_exception_handler, unhandled_exception_handler
-from app.api.routers import auth, users
+from app.api.routers import admin, auth, bookings, services, users
 from app.core.config.settings import get_settings
 from app.core.logging.logger import configure_logging
 from app.core.middleware.correlation_id import CorrelationIdMiddleware
@@ -33,6 +33,9 @@ app.add_exception_handler(Exception, unhandled_exception_handler)
 
 app.include_router(auth.router)
 app.include_router(users.router)
+app.include_router(services.router)
+app.include_router(bookings.router)
+app.include_router(admin.router)
 
 
 @app.get("/health", tags=["health"])
