@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.dependencies.auth import get_current_user, require_role
 from app.api.dependencies.database import get_session
 from app.api.schemas.booking_schema import BookingCreateRequest, BookingResponse
+from app.api.schemas.pagination import PageParams, PaginatedResponse
 from app.application.dto.booking_dto import BookingCreateDTO
 from app.application.use_cases.booking.accept_booking import AcceptBooking
 from app.application.use_cases.booking.cancel_booking import CancelBooking
@@ -31,16 +32,21 @@ async def create_booking(
     return await use_case.execute(dto, client_id=current_user.id)
 
 
-@router.get("/", response_model=list[BookingResponse])
+@router.get("/", response_model=PaginatedResponse[BookingResponse])
 async def list_bookings(
+    params: Annotated[PageParams, Depends()],
     current_user: Annotated[User, Depends(get_current_user)],
     session: Annotated[AsyncSession, Depends(get_session)],
 ):
     uow = SQLAlchemyUnitOfWork(session)
     async with uow:
         if current_user.role == Role.PROVIDER:
-            return await uow.bookings.get_by_provider(current_user.id)
-        return await uow.bookings.get_by_client(current_user.id)
+            all_items = await uow.bookings.get_by_provider(current_user.id)
+        else:
+            all_items = await uow.bookings.get_by_client(current_user.id)
+    page_items = all_items[params.offset : params.offset + params.size]
+    has_next = len(all_items) > params.offset + params.size
+    return PaginatedResponse(items=page_items, page=params.page, size=params.size, has_next=has_next)
 
 
 @router.get("/{booking_id}", response_model=BookingResponse)

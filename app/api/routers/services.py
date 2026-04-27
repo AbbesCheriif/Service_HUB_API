@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies.auth import get_current_user, require_role
 from app.api.dependencies.database import get_session
+from app.api.schemas.pagination import PageParams, PaginatedResponse
 from app.api.schemas.service_schema import ServiceCreateRequest, ServiceResponse, ServiceUpdateRequest
 from app.application.dto.service_dto import ServiceCreateDTO
 from app.application.use_cases.service.create_service import CreateService
@@ -30,15 +31,16 @@ async def create_service(
     return await use_case.execute(dto, provider_id=current_user.id)
 
 
-@router.get("/", response_model=list[ServiceResponse])
+@router.get("/", response_model=PaginatedResponse[ServiceResponse])
 async def list_services(
-    offset: int = 0,
-    limit: int = 20,
-    session: Annotated[AsyncSession, Depends(get_session)] = ...,
+    params: Annotated[PageParams, Depends()],
+    session: Annotated[AsyncSession, Depends(get_session)],
 ):
     uow = SQLAlchemyUnitOfWork(session)
     use_case = ListServices(uow=uow)
-    return await use_case.execute(offset=offset, limit=limit)
+    items = await use_case.execute(offset=params.offset, limit=params.size + 1)
+    has_next = len(items) > params.size
+    return PaginatedResponse(items=items[: params.size], page=params.page, size=params.size, has_next=has_next)
 
 
 @router.get("/{service_id}", response_model=ServiceResponse)
