@@ -38,7 +38,8 @@ coverage.xml
 Thumbs.db
 
 # Uploads
-uploads/
+uploads/*
+!uploads/.gitkeep
 
 # Alembic
 alembic/versions/*.pyc
