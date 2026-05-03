@@ -9,6 +9,7 @@ from app.api.schemas.auth_schema import LoginRequest, RefreshRequest, RegisterRe
 from app.application.dto.user_dto import UserCreateDTO, UserReadDTO
 from app.application.use_cases.auth.login import Login
 from app.application.use_cases.auth.register import Register
+from app.core.middleware.rate_limiter import RateLimiter
 from app.domain.exceptions import InvalidCredentials
 from app.infrastructure.auth.jwt_service import JWTService
 from app.infrastructure.auth.password_service import PasswordService
@@ -17,8 +18,10 @@ from app.infrastructure.repositories.user_repository_impl import SQLAlchemyUserR
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
+_auth_rate_limit = RateLimiter(max_requests=5, window_seconds=60)
 
-@router.post("/register", response_model=UserReadDTO, status_code=status.HTTP_201_CREATED)
+
+@router.post("/register", response_model=UserReadDTO, status_code=status.HTTP_201_CREATED, dependencies=[Depends(_auth_rate_limit)])
 async def register(
     payload: RegisterRequest,
     session: Annotated[AsyncSession, Depends(get_session)],
@@ -34,7 +37,7 @@ async def register(
     return await use_case.execute(dto)
 
 
-@router.post("/login", response_model=TokenResponse)
+@router.post("/login", response_model=TokenResponse, dependencies=[Depends(_auth_rate_limit)])
 async def login(
     payload: LoginRequest,
     session: Annotated[AsyncSession, Depends(get_session)],
