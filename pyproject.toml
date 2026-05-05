@@ -40,11 +40,24 @@ select = ["E", "F", "I", "UP"]
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
+markers = [
+    "integration: marks tests that require a real database (deselect with '-m not integration')",
+]
 
 [tool.coverage.run]
 source = ["app"]
-omit = ["tests/*"]
+branch = true
+omit = [
+    "tests/*",
+    "alembic/*",
+]
 
 [tool.coverage.report]
 show_missing = true
 fail_under = 80
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+]
