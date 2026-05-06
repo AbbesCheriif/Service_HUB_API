@@ -14,6 +14,7 @@ from app.application.use_cases.service.list_services import ListServices
 from app.domain.entities.user import User
 from app.domain.exceptions import PermissionDenied, ServiceNotFound
 from app.domain.value_objects.role import Role
+from app.infrastructure.cache.cache_service import CacheService
 from app.infrastructure.database.unit_of_work import SQLAlchemyUnitOfWork
 
 router = APIRouter(prefix="/services", tags=["services"])
@@ -26,7 +27,7 @@ async def create_service(
     session: Annotated[AsyncSession, Depends(get_session)],
 ):
     uow = SQLAlchemyUnitOfWork(session)
-    use_case = CreateService(uow=uow)
+    use_case = CreateService(uow=uow, cache=CacheService())
     dto = ServiceCreateDTO(**payload.model_dump())
     return await use_case.execute(dto, provider_id=current_user.id)
 
@@ -37,7 +38,7 @@ async def list_services(
     session: Annotated[AsyncSession, Depends(get_session)],
 ):
     uow = SQLAlchemyUnitOfWork(session)
-    use_case = ListServices(uow=uow)
+    use_case = ListServices(uow=uow, cache=CacheService())
     items = await use_case.execute(offset=params.offset, limit=params.size + 1)
     has_next = len(items) > params.size
     return PaginatedResponse(items=items[: params.size], page=params.page, size=params.size, has_next=has_next)

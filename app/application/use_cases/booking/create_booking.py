@@ -37,9 +37,9 @@ class CreateBooking:
 
         if background_tasks is not None:
             notify_provider_new_booking(
-                provider_email=service.contact_email,
+                provider_email="",
                 booking_id=saved.id,
-                service_name=service.name,
+                service_name=service.title,
                 background_tasks=background_tasks,
             )
             schedule_provider_stats_recalculation(
