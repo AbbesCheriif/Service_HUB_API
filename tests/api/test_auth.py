@@ -3,18 +3,22 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 from httpx import ASGITransport, AsyncClient
 
+import app.api.routers.auth as auth_router
 from app.api.dependencies.database import get_session
 from app.application.dto.user_dto import UserReadDTO
 from app.application.use_cases.auth.login import TokenDTO
-from app.core.middleware.rate_limiter import RateLimiter
 from app.domain.exceptions import InvalidCredentials, UserAlreadyExists
 from app.main import app
 
 
 @pytest.fixture(autouse=True)
 def disable_rate_limit():
-    with patch.object(RateLimiter, "__call__", new=AsyncMock(return_value=None)):
-        yield
+    async def noop():
+        pass
+
+    app.dependency_overrides[auth_router._auth_rate_limit] = noop
+    yield
+    app.dependency_overrides.pop(auth_router._auth_rate_limit, None)
 
 
 @pytest.fixture
