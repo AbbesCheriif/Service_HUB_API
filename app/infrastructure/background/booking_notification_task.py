@@ -45,7 +45,9 @@ def notify_client_booking_cancelled(
     )
 
 
-def _send_provider_new_booking(provider_email: str, booking_id: UUID, service_name: str) -> None:
+def _send_provider_new_booking(
+    provider_email: str, booking_id: UUID, service_name: str
+) -> None:
     logger.info(
         "mock_provider_new_booking",
         to=provider_email,

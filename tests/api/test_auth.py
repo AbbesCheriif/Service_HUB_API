@@ -24,7 +24,9 @@ def disable_rate_limit():
 @pytest.fixture
 async def client():
     app.dependency_overrides[get_session] = lambda: MagicMock()
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as c:
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as c:
         yield c
     app.dependency_overrides.clear()
 
@@ -91,7 +93,9 @@ async def test_register_invalid_email(client):
 
 
 async def test_login_success(client):
-    token_dto = TokenDTO(access_token="access.token.here", refresh_token="refresh.token.here")
+    token_dto = TokenDTO(
+        access_token="access.token.here", refresh_token="refresh.token.here"
+    )
     with patch("app.api.routers.auth.Login") as MockLogin:
         MockLogin.return_value.execute = AsyncMock(return_value=token_dto)
         response = await client.post(

@@ -14,7 +14,12 @@ class TokenDTO:
 
 
 class Login:
-    def __init__(self, uow: UnitOfWork, password_service: PasswordService, jwt_service: JWTService) -> None:
+    def __init__(
+        self,
+        uow: UnitOfWork,
+        password_service: PasswordService,
+        jwt_service: JWTService,
+    ) -> None:
         self._uow = uow
         self._password_service = password_service
         self._jwt_service = jwt_service
@@ -26,6 +31,8 @@ class Login:
                 raise InvalidCredentials()
             if not self._password_service.verify(password, user.hashed_password):
                 raise InvalidCredentials()
-            access_token = self._jwt_service.create_access_token(str(user.id), user.role.value)
+            access_token = self._jwt_service.create_access_token(
+                str(user.id), user.role.value
+            )
             refresh_token = self._jwt_service.create_refresh_token(str(user.id))
             return TokenDTO(access_token=access_token, refresh_token=refresh_token)

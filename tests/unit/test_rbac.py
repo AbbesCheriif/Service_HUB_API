@@ -1,4 +1,3 @@
-
 from app.core.security.strategies.admin_strategy import AdminPermissionStrategy
 from app.core.security.strategies.client_strategy import ClientPermissionStrategy
 from app.core.security.strategies.provider_strategy import ProviderPermissionStrategy

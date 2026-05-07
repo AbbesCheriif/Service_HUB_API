@@ -57,17 +57,23 @@ async def test_accept_booking_invalid_transition(mock_uow, sample_booking):
     use_case = AcceptBooking(uow=mock_uow)
 
     with pytest.raises(InvalidBookingTransition):
-        await use_case.execute(sample_booking.id, provider_id=sample_booking.provider_id)
+        await use_case.execute(
+            sample_booking.id, provider_id=sample_booking.provider_id
+        )
 
     mock_uow.bookings.save.assert_not_called()
 
 
 @pytest.mark.asyncio
-async def test_accept_booking_cancelled_raises_transition_error(mock_uow, sample_booking):
+async def test_accept_booking_cancelled_raises_transition_error(
+    mock_uow, sample_booking
+):
     sample_booking.status = BookingStatus.CANCELLED
     mock_uow.bookings.get_by_id.return_value = sample_booking
 
     use_case = AcceptBooking(uow=mock_uow)
 
     with pytest.raises(InvalidBookingTransition):
-        await use_case.execute(sample_booking.id, provider_id=sample_booking.provider_id)
+        await use_case.execute(
+            sample_booking.id, provider_id=sample_booking.provider_id
+        )

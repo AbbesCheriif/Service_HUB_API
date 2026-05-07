@@ -33,7 +33,9 @@ def _make_service_dto(**kwargs) -> ServiceReadDTO:
 @pytest.fixture
 async def client():
     app.dependency_overrides[get_session] = lambda: MagicMock()
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as c:
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as c:
         yield c
     app.dependency_overrides.clear()
 
@@ -44,7 +46,9 @@ async def provider_client(sample_user):
     sample_user_copy.role = Role.PROVIDER
     app.dependency_overrides[get_session] = lambda: MagicMock()
     app.dependency_overrides[get_current_user] = lambda: sample_user_copy
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as c:
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as c:
         yield c
     app.dependency_overrides.clear()
 
@@ -76,7 +80,9 @@ async def test_get_service_not_found(client):
     mock_uow_inst.__aenter__ = AsyncMock(return_value=mock_uow_inst)
     mock_uow_inst.__aexit__ = AsyncMock(return_value=False)
     mock_uow_inst.services.get_by_id = AsyncMock(return_value=None)
-    with patch("app.api.routers.services.SQLAlchemyUnitOfWork", return_value=mock_uow_inst):
+    with patch(
+        "app.api.routers.services.SQLAlchemyUnitOfWork", return_value=mock_uow_inst
+    ):
         response = await client.get(f"/services/{service_id}")
     assert response.status_code == 404
 
@@ -87,7 +93,9 @@ async def test_get_service_success(client):
     mock_uow_inst.__aenter__ = AsyncMock(return_value=mock_uow_inst)
     mock_uow_inst.__aexit__ = AsyncMock(return_value=False)
     mock_uow_inst.services.get_by_id = AsyncMock(return_value=service_dto)
-    with patch("app.api.routers.services.SQLAlchemyUnitOfWork", return_value=mock_uow_inst):
+    with patch(
+        "app.api.routers.services.SQLAlchemyUnitOfWork", return_value=mock_uow_inst
+    ):
         response = await client.get(f"/services/{service_dto.id}")
     assert response.status_code == 200
     assert response.json()["title"] == "Test Service"

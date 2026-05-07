@@ -15,7 +15,9 @@ class SQLAlchemyBookingRepository(BookingRepository):
         self._session = session
 
     async def get_by_id(self, booking_id: UUID) -> Booking | None:
-        result = await self._session.execute(select(BookingModel).where(BookingModel.id == booking_id))
+        result = await self._session.execute(
+            select(BookingModel).where(BookingModel.id == booking_id)
+        )
         model = result.scalar_one_or_none()
         return self._to_entity(model) if model else None
 
@@ -38,7 +40,9 @@ class SQLAlchemyBookingRepository(BookingRepository):
         return [self._to_entity(m) for m in result.scalars().all()]
 
     async def save(self, booking: Booking) -> Booking:
-        result = await self._session.execute(select(BookingModel).where(BookingModel.id == booking.id))
+        result = await self._session.execute(
+            select(BookingModel).where(BookingModel.id == booking.id)
+        )
         model = result.scalar_one_or_none()
         if model is None:
             model = self._to_model(booking)
@@ -53,7 +57,9 @@ class SQLAlchemyBookingRepository(BookingRepository):
         return self._to_entity(model)
 
     async def delete(self, booking_id: UUID) -> None:
-        result = await self._session.execute(select(BookingModel).where(BookingModel.id == booking_id))
+        result = await self._session.execute(
+            select(BookingModel).where(BookingModel.id == booking_id)
+        )
         model = result.scalar_one_or_none()
         if model:
             await self._session.delete(model)

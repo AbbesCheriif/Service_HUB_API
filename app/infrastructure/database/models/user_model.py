@@ -12,8 +12,12 @@ from app.infrastructure.database.models.base import Base
 class UserModel(Base):
     __tablename__ = "users"
 
-    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False, index=True)
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    email: Mapped[str] = mapped_column(
+        String(255), unique=True, nullable=False, index=True
+    )
     full_name: Mapped[str] = mapped_column(String(255), nullable=False)
     hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
     role: Mapped[str] = mapped_column(Enum(Role), nullable=False, default=Role.CLIENT)
@@ -26,6 +30,15 @@ class UserModel(Base):
         DateTime(timezone=True), nullable=False, default=lambda: datetime.now(UTC)
     )
 
-    services: Mapped[list["ServiceModel"]] = relationship("ServiceModel", back_populates="provider", lazy="selectin")  # noqa: F821
-    bookings: Mapped[list["BookingModel"]] = relationship("BookingModel", back_populates="client", lazy="selectin", foreign_keys="BookingModel.client_id")  # noqa: F821
-    file_uploads: Mapped[list["FileUploadModel"]] = relationship("FileUploadModel", back_populates="uploader", lazy="selectin")  # noqa: F821
+    services: Mapped[list["ServiceModel"]] = relationship(
+        "ServiceModel", back_populates="provider", lazy="selectin"
+    )  # noqa: F821
+    bookings: Mapped[list["BookingModel"]] = relationship(
+        "BookingModel",
+        back_populates="client",
+        lazy="selectin",
+        foreign_keys="BookingModel.client_id",
+    )  # noqa: F821
+    file_uploads: Mapped[list["FileUploadModel"]] = relationship(
+        "FileUploadModel", back_populates="uploader", lazy="selectin"
+    )  # noqa: F821

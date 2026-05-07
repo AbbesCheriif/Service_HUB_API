@@ -46,7 +46,9 @@ async def list_bookings(
             all_items = await uow.bookings.get_by_client(current_user.id)
     page_items = all_items[params.offset : params.offset + params.size]
     has_next = len(all_items) > params.offset + params.size
-    return PaginatedResponse(items=page_items, page=params.page, size=params.size, has_next=has_next)
+    return PaginatedResponse(
+        items=page_items, page=params.page, size=params.size, has_next=has_next
+    )
 
 
 @router.get("/{booking_id}", response_model=BookingResponse)
@@ -60,7 +62,10 @@ async def get_booking(
         booking = await uow.bookings.get_by_id(booking_id)
     if not booking:
         raise BookingNotFound(str(booking_id))
-    if current_user.role != Role.ADMIN and current_user.id not in (booking.client_id, booking.provider_id):
+    if current_user.role != Role.ADMIN and current_user.id not in (
+        booking.client_id,
+        booking.provider_id,
+    ):
         raise PermissionDenied("access denied")
     return booking
 

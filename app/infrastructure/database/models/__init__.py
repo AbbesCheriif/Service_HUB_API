@@ -5,4 +5,11 @@ from app.infrastructure.database.models.review_model import ReviewModel
 from app.infrastructure.database.models.service_model import ServiceModel
 from app.infrastructure.database.models.user_model import UserModel
 
-__all__ = ["Base", "UserModel", "ServiceModel", "BookingModel", "ReviewModel", "FileUploadModel"]
+__all__ = [
+    "Base",
+    "UserModel",
+    "ServiceModel",
+    "BookingModel",
+    "ReviewModel",
+    "FileUploadModel",
+]

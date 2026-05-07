@@ -12,6 +12,7 @@ def cached(ttl: int = 300, key_prefix: str = ""):
     The cache key is built from key_prefix + the stringified positional and
     keyword arguments so that different call signatures map to distinct slots.
     """
+
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)
         async def wrapper(*args: Any, **kwargs: Any) -> Any:
@@ -31,4 +32,5 @@ def cached(ttl: int = 300, key_prefix: str = ""):
             return result
 
         return wrapper
+
     return decorator

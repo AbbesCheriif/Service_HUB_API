@@ -11,8 +11,12 @@ from app.infrastructure.database.models.base import Base
 class ServiceModel(Base):
     __tablename__ = "services"
 
-    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    provider_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, index=True)
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    provider_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, index=True
+    )
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=False, default="")
     price: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
@@ -29,5 +33,9 @@ class ServiceModel(Base):
     )
 
     provider: Mapped["UserModel"] = relationship("UserModel", back_populates="services")  # noqa: F821
-    bookings: Mapped[list["BookingModel"]] = relationship("BookingModel", back_populates="service", lazy="selectin")  # noqa: F821
-    reviews: Mapped[list["ReviewModel"]] = relationship("ReviewModel", back_populates="service", lazy="selectin")  # noqa: F821
+    bookings: Mapped[list["BookingModel"]] = relationship(
+        "BookingModel", back_populates="service", lazy="selectin"
+    )  # noqa: F821
+    reviews: Mapped[list["ReviewModel"]] = relationship(
+        "ReviewModel", back_populates="service", lazy="selectin"
+    )  # noqa: F821

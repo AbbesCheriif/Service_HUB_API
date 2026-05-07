@@ -62,7 +62,9 @@ async def test_create_booking_conflict(mock_uow, sample_service):
 
 
 @pytest.mark.asyncio
-async def test_create_booking_no_background_tasks(mock_uow, sample_service, sample_booking):
+async def test_create_booking_no_background_tasks(
+    mock_uow, sample_service, sample_booking
+):
     mock_uow.services.get_by_id.return_value = sample_service
     mock_uow.bookings.has_conflict.return_value = False
     mock_uow.bookings.save.return_value = sample_booking

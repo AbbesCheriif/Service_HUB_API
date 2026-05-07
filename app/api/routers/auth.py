@@ -27,7 +27,12 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 _auth_rate_limit = RateLimiter(max_requests=5, window_seconds=60)
 
 
-@router.post("/register", response_model=UserReadDTO, status_code=status.HTTP_201_CREATED, dependencies=[Depends(_auth_rate_limit)])
+@router.post(
+    "/register",
+    response_model=UserReadDTO,
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(_auth_rate_limit)],
+)
 async def register(
     payload: RegisterRequest,
     session: Annotated[AsyncSession, Depends(get_session)],
@@ -43,15 +48,21 @@ async def register(
     return await use_case.execute(dto)
 
 
-@router.post("/login", response_model=TokenResponse, dependencies=[Depends(_auth_rate_limit)])
+@router.post(
+    "/login", response_model=TokenResponse, dependencies=[Depends(_auth_rate_limit)]
+)
 async def login(
     payload: LoginRequest,
     session: Annotated[AsyncSession, Depends(get_session)],
 ):
     uow = SQLAlchemyUnitOfWork(session)
-    use_case = Login(uow=uow, password_service=PasswordService(), jwt_service=JWTService())
+    use_case = Login(
+        uow=uow, password_service=PasswordService(), jwt_service=JWTService()
+    )
     result = await use_case.execute(payload.email, payload.password)
-    return TokenResponse(access_token=result.access_token, refresh_token=result.refresh_token)
+    return TokenResponse(
+        access_token=result.access_token, refresh_token=result.refresh_token
+    )
 
 
 @router.post("/refresh", response_model=TokenResponse)

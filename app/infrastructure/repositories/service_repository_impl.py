@@ -13,7 +13,9 @@ class SQLAlchemyServiceRepository(ServiceRepository):
         self._session = session
 
     async def get_by_id(self, service_id: UUID) -> Service | None:
-        result = await self._session.execute(select(ServiceModel).where(ServiceModel.id == service_id))
+        result = await self._session.execute(
+            select(ServiceModel).where(ServiceModel.id == service_id)
+        )
         model = result.scalar_one_or_none()
         return self._to_entity(model) if model else None
 
@@ -24,7 +26,9 @@ class SQLAlchemyServiceRepository(ServiceRepository):
         return [self._to_entity(m) for m in result.scalars().all()]
 
     async def save(self, service: Service) -> Service:
-        result = await self._session.execute(select(ServiceModel).where(ServiceModel.id == service.id))
+        result = await self._session.execute(
+            select(ServiceModel).where(ServiceModel.id == service.id)
+        )
         model = result.scalar_one_or_none()
         if model is None:
             model = self._to_model(service)
@@ -43,7 +47,9 @@ class SQLAlchemyServiceRepository(ServiceRepository):
         return self._to_entity(model)
 
     async def delete(self, service_id: UUID) -> None:
-        result = await self._session.execute(select(ServiceModel).where(ServiceModel.id == service_id))
+        result = await self._session.execute(
+            select(ServiceModel).where(ServiceModel.id == service_id)
+        )
         model = result.scalar_one_or_none()
         if model:
             await self._session.delete(model)

@@ -30,7 +30,9 @@ class FileUploadResponse(BaseModel):
     url: str | None
 
 
-@router.post("/upload", response_model=FileUploadResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/upload", response_model=FileUploadResponse, status_code=status.HTTP_201_CREATED
+)
 async def upload_file(
     file: UploadFile,
     current_user: Annotated[User, Depends(get_current_user)],

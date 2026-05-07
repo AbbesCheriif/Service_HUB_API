@@ -36,7 +36,9 @@ async def test_engine():
 
 @pytest_asyncio.fixture
 async def session(test_engine):
-    factory = async_sessionmaker(test_engine, class_=AsyncSession, expire_on_commit=False)
+    factory = async_sessionmaker(
+        test_engine, class_=AsyncSession, expire_on_commit=False
+    )
     async with factory() as s:
         yield s
         await s.rollback()

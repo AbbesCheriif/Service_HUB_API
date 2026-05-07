@@ -44,7 +44,12 @@ async def list_services(
     use_case = ListServices(uow=uow)
     items = await use_case.execute(offset=params.offset, limit=params.size + 1)
     has_next = len(items) > params.size
-    return PaginatedResponse(items=items[: params.size], page=params.page, size=params.size, has_next=has_next)
+    return PaginatedResponse(
+        items=items[: params.size],
+        page=params.page,
+        size=params.size,
+        has_next=has_next,
+    )
 
 
 @router.get("/{service_id}", response_model=ServiceResponse)
