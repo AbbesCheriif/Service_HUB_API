@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from typing import Optional
 from uuid import UUID, uuid4
 
 from app.domain.entities.base import BaseEntity
@@ -12,4 +11,4 @@ class FileUpload(BaseEntity):
     content_type: str = ""
     size_bytes: int = 0
     storage_path: str = ""
-    url: Optional[str] = None
+    url: str | None = None

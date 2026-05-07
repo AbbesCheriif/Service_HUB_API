@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-from typing import Optional
 from uuid import UUID
 
 from sqlalchemy import and_, select
@@ -15,7 +14,7 @@ class SQLAlchemyBookingRepository(BookingRepository):
     def __init__(self, session: AsyncSession) -> None:
         self._session = session
 
-    async def get_by_id(self, booking_id: UUID) -> Optional[Booking]:
+    async def get_by_id(self, booking_id: UUID) -> Booking | None:
         result = await self._session.execute(select(BookingModel).where(BookingModel.id == booking_id))
         model = result.scalar_one_or_none()
         return self._to_entity(model) if model else None

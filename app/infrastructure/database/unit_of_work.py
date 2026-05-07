@@ -1,9 +1,15 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.application.interfaces.unit_of_work import UnitOfWork
-from app.infrastructure.repositories.booking_repository_impl import SQLAlchemyBookingRepository
-from app.infrastructure.repositories.service_repository_impl import SQLAlchemyServiceRepository
-from app.infrastructure.repositories.user_repository_impl import SQLAlchemyUserRepository
+from app.infrastructure.repositories.booking_repository_impl import (
+    SQLAlchemyBookingRepository,
+)
+from app.infrastructure.repositories.service_repository_impl import (
+    SQLAlchemyServiceRepository,
+)
+from app.infrastructure.repositories.user_repository_impl import (
+    SQLAlchemyUserRepository,
+)
 
 
 class SQLAlchemyUnitOfWork(UnitOfWork):

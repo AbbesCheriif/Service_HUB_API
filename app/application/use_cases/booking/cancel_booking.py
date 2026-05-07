@@ -3,7 +3,11 @@ from uuid import UUID
 from app.application.dto.booking_dto import BookingReadDTO
 from app.application.dto.mappers import booking_to_dto
 from app.application.interfaces.unit_of_work import UnitOfWork
-from app.domain.exceptions import BookingNotFound, InvalidBookingTransition, PermissionDenied
+from app.domain.exceptions import (
+    BookingNotFound,
+    InvalidBookingTransition,
+    PermissionDenied,
+)
 from app.domain.value_objects.booking_status import BookingStatus
 
 

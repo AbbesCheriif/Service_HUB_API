@@ -5,16 +5,22 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies.database import get_session
-from app.api.schemas.auth_schema import LoginRequest, RefreshRequest, RegisterRequest, TokenResponse
+from app.api.schemas.auth_schema import (
+    LoginRequest,
+    RefreshRequest,
+    RegisterRequest,
+    TokenResponse,
+)
 from app.application.dto.user_dto import UserCreateDTO, UserReadDTO
 from app.application.use_cases.auth.login import Login
 from app.application.use_cases.auth.register import Register
 from app.core.middleware.rate_limiter import RateLimiter
-from app.domain.exceptions import InvalidCredentials
 from app.infrastructure.auth.jwt_service import JWTService
 from app.infrastructure.auth.password_service import PasswordService
 from app.infrastructure.database.unit_of_work import SQLAlchemyUnitOfWork
-from app.infrastructure.repositories.user_repository_impl import SQLAlchemyUserRepository
+from app.infrastructure.repositories.user_repository_impl import (
+    SQLAlchemyUserRepository,
+)
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 

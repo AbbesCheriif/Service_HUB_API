@@ -4,10 +4,14 @@ from uuid import UUID
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.dependencies.auth import get_current_user, require_role
+from app.api.dependencies.auth import require_role
 from app.api.dependencies.database import get_session
 from app.api.schemas.pagination import PageParams, PaginatedResponse
-from app.api.schemas.service_schema import ServiceCreateRequest, ServiceResponse, ServiceUpdateRequest
+from app.api.schemas.service_schema import (
+    ServiceCreateRequest,
+    ServiceResponse,
+    ServiceUpdateRequest,
+)
 from app.application.dto.service_dto import ServiceCreateDTO
 from app.application.use_cases.service.create_service import CreateService
 from app.application.use_cases.service.list_services import ListServices

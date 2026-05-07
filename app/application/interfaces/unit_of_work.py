@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from types import TracebackType
-from typing import Optional, Type
 
 from app.domain.repositories.booking_repository import BookingRepository
 from app.domain.repositories.service_repository import ServiceRepository
@@ -17,9 +16,9 @@ class UnitOfWork(ABC):
 
     async def __aexit__(
         self,
-        exc_type: Optional[Type[BaseException]],
-        exc_val: Optional[BaseException],
-        exc_tb: Optional[TracebackType],
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
     ) -> None:
         if exc_type:
             await self.rollback()

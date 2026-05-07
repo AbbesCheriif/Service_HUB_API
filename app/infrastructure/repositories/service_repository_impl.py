@@ -1,4 +1,3 @@
-from typing import Optional
 from uuid import UUID
 
 from sqlalchemy import select
@@ -13,7 +12,7 @@ class SQLAlchemyServiceRepository(ServiceRepository):
     def __init__(self, session: AsyncSession) -> None:
         self._session = session
 
-    async def get_by_id(self, service_id: UUID) -> Optional[Service]:
+    async def get_by_id(self, service_id: UUID) -> Service | None:
         result = await self._session.execute(select(ServiceModel).where(ServiceModel.id == service_id))
         model = result.scalar_one_or_none()
         return self._to_entity(model) if model else None

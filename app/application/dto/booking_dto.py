@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -10,7 +9,7 @@ from app.domain.value_objects.booking_status import BookingStatus
 class BookingCreateDTO(BaseModel):
     service_id: UUID
     scheduled_at: datetime
-    notes: Optional[str] = None
+    notes: str | None = None
 
 
 class BookingReadDTO(BaseModel):
@@ -20,7 +19,7 @@ class BookingReadDTO(BaseModel):
     provider_id: UUID
     scheduled_at: datetime
     status: BookingStatus
-    notes: Optional[str]
+    notes: str | None
     total_price: float
     created_at: datetime
     updated_at: datetime
@@ -29,5 +28,5 @@ class BookingReadDTO(BaseModel):
 
 
 class BookingUpdateDTO(BaseModel):
-    status: Optional[BookingStatus] = None
-    notes: Optional[str] = None
+    status: BookingStatus | None = None
+    notes: str | None = None
