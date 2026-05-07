@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import uuid4
 
@@ -13,7 +13,7 @@ from app.main import app
 
 
 def _make_service_dto(**kwargs) -> ServiceReadDTO:
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     return ServiceReadDTO(
         id=kwargs.get("id", uuid4()),
         provider_id=kwargs.get("provider_id", uuid4()),

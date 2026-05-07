@@ -1,4 +1,3 @@
-import pytest
 
 from app.core.security.strategies.admin_strategy import AdminPermissionStrategy
 from app.core.security.strategies.client_strategy import ClientPermissionStrategy

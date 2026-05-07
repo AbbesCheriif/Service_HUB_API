@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import uuid4
 
@@ -14,13 +14,13 @@ from app.main import app
 
 
 def _make_booking_dto(client_id=None, provider_id=None, **kwargs) -> BookingReadDTO:
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     return BookingReadDTO(
         id=kwargs.get("id", uuid4()),
         client_id=client_id or uuid4(),
         service_id=kwargs.get("service_id", uuid4()),
         provider_id=provider_id or uuid4(),
-        scheduled_at=kwargs.get("scheduled_at", datetime(2026, 8, 1, 10, 0, tzinfo=timezone.utc)),
+        scheduled_at=kwargs.get("scheduled_at", datetime(2026, 8, 1, 10, 0, tzinfo=UTC)),
         status=kwargs.get("status", BookingStatus.PENDING),
         notes=kwargs.get("notes", None),
         total_price=kwargs.get("total_price", 50.0),
