@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -13,7 +12,7 @@ class UserResponse(BaseModel):
     full_name: str
     role: Role
     is_active: bool
-    bio: Optional[str]
+    bio: str | None
     created_at: datetime
     updated_at: datetime
 

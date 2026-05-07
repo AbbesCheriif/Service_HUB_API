@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Optional
 from uuid import UUID
 
 from app.domain.entities.booking import Booking
@@ -8,7 +7,7 @@ from app.domain.entities.booking import Booking
 
 class BookingRepository(ABC):
     @abstractmethod
-    async def get_by_id(self, booking_id: UUID) -> Optional[Booking]: ...
+    async def get_by_id(self, booking_id: UUID) -> Booking | None: ...
 
     @abstractmethod
     async def get_by_client(self, client_id: UUID) -> list[Booking]: ...

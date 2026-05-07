@@ -1,8 +1,13 @@
-import pytest
 from uuid import uuid4
 
+import pytest
+
 from app.application.use_cases.booking.accept_booking import AcceptBooking
-from app.domain.exceptions import BookingNotFound, InvalidBookingTransition, PermissionDenied
+from app.domain.exceptions import (
+    BookingNotFound,
+    InvalidBookingTransition,
+    PermissionDenied,
+)
 from app.domain.value_objects.booking_status import BookingStatus
 
 
@@ -10,10 +15,8 @@ from app.domain.value_objects.booking_status import BookingStatus
 async def test_accept_booking_success(mock_uow, sample_booking):
     provider_id = sample_booking.provider_id
     sample_booking.status = BookingStatus.PENDING
-    confirmed_booking = sample_booking
-    confirmed_booking.status = BookingStatus.CONFIRMED
     mock_uow.bookings.get_by_id.return_value = sample_booking
-    mock_uow.bookings.save.return_value = confirmed_booking
+    mock_uow.bookings.save.return_value = sample_booking
 
     use_case = AcceptBooking(uow=mock_uow)
     result = await use_case.execute(sample_booking.id, provider_id=provider_id)
@@ -54,17 +57,23 @@ async def test_accept_booking_invalid_transition(mock_uow, sample_booking):
     use_case = AcceptBooking(uow=mock_uow)
 
     with pytest.raises(InvalidBookingTransition):
-        await use_case.execute(sample_booking.id, provider_id=sample_booking.provider_id)
+        await use_case.execute(
+            sample_booking.id, provider_id=sample_booking.provider_id
+        )
 
     mock_uow.bookings.save.assert_not_called()
 
 
 @pytest.mark.asyncio
-async def test_accept_booking_cancelled_raises_transition_error(mock_uow, sample_booking):
+async def test_accept_booking_cancelled_raises_transition_error(
+    mock_uow, sample_booking
+):
     sample_booking.status = BookingStatus.CANCELLED
     mock_uow.bookings.get_by_id.return_value = sample_booking
 
     use_case = AcceptBooking(uow=mock_uow)
 
     with pytest.raises(InvalidBookingTransition):
-        await use_case.execute(sample_booking.id, provider_id=sample_booking.provider_id)
+        await use_case.execute(
+            sample_booking.id, provider_id=sample_booking.provider_id
+        )

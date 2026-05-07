@@ -1,5 +1,6 @@
-import pytest
 from uuid import uuid4
+
+import pytest
 
 from app.application.use_cases.user.get_user import GetUser
 from app.domain.exceptions import UserNotFound

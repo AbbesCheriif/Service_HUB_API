@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import Optional
 from uuid import UUID
 
 from app.domain.entities.service import Service
@@ -7,7 +6,7 @@ from app.domain.entities.service import Service
 
 class ServiceRepository(ABC):
     @abstractmethod
-    async def get_by_id(self, service_id: UUID) -> Optional[Service]: ...
+    async def get_by_id(self, service_id: UUID) -> Service | None: ...
 
     @abstractmethod
     async def get_by_provider(self, provider_id: UUID) -> list[Service]: ...

@@ -15,14 +15,18 @@ class EmailNotificationService(NotificationService):
     async def send_email(self, to: str, subject: str, body: str) -> None:
         self._tasks.add_task(self._mock_smtp_send, to, subject, body)
 
-    async def notify_booking_confirmation(self, booking_id: UUID, client_email: str) -> None:
+    async def notify_booking_confirmation(
+        self, booking_id: UUID, client_email: str
+    ) -> None:
         await self.send_email(
             to=client_email,
             subject="Booking Confirmed",
             body=f"Your booking {booking_id} has been confirmed.",
         )
 
-    async def notify_booking_cancellation(self, booking_id: UUID, client_email: str) -> None:
+    async def notify_booking_cancellation(
+        self, booking_id: UUID, client_email: str
+    ) -> None:
         await self.send_email(
             to=client_email,
             subject="Booking Cancelled",

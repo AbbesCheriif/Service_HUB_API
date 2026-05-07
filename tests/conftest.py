@@ -1,7 +1,8 @@
-import pytest
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import AsyncMock
 from uuid import uuid4
+
+import pytest
 
 from app.domain.entities.booking import Booking
 from app.domain.entities.service import Service
@@ -76,8 +77,8 @@ def sample_user():
         hashed_password="hashed_pw",
         role=Role.CLIENT,
         is_active=True,
-        created_at=datetime.now(timezone.utc),
-        updated_at=datetime.now(timezone.utc),
+        created_at=datetime.now(UTC),
+        updated_at=datetime.now(UTC),
     )
 
 
@@ -102,9 +103,9 @@ def sample_booking(sample_service):
         client_id=uuid4(),
         service_id=sample_service.id,
         provider_id=sample_service.provider_id,
-        scheduled_at=datetime(2025, 6, 1, 10, 0, tzinfo=timezone.utc),
+        scheduled_at=datetime(2025, 6, 1, 10, 0, tzinfo=UTC),
         status=BookingStatus.PENDING,
         total_price=sample_service.price,
-        created_at=datetime.now(timezone.utc),
-        updated_at=datetime.now(timezone.utc),
+        created_at=datetime.now(UTC),
+        updated_at=datetime.now(UTC),
     )

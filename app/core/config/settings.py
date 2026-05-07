@@ -12,7 +12,9 @@ class Settings(BaseSettings):
     DEBUG: bool = True
     LOG_LEVEL: str = "INFO"
 
-    DATABASE_URL: str = "postgresql+asyncpg://postgres:password@localhost:5432/servicehub"
+    DATABASE_URL: str = (
+        "postgresql+asyncpg://postgres:password@localhost:5432/servicehub"
+    )
     REDIS_URL: str = "redis://localhost:6379/0"
 
     SECRET_KEY: str = "change-me-to-a-long-random-secret-key"

@@ -10,7 +10,9 @@ from app.domain.entities.user import User
 from app.domain.exceptions import InvalidCredentials
 from app.domain.value_objects.role import Role
 from app.infrastructure.auth.jwt_service import JWTService
-from app.infrastructure.repositories.user_repository_impl import SQLAlchemyUserRepository
+from app.infrastructure.repositories.user_repository_impl import (
+    SQLAlchemyUserRepository,
+)
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 _jwt_service = JWTService()

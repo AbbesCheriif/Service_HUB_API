@@ -3,24 +3,30 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 from httpx import ASGITransport, AsyncClient
 
+import app.api.routers.auth as auth_router
 from app.api.dependencies.database import get_session
 from app.application.dto.user_dto import UserReadDTO
 from app.application.use_cases.auth.login import TokenDTO
-from app.core.middleware.rate_limiter import RateLimiter
 from app.domain.exceptions import InvalidCredentials, UserAlreadyExists
 from app.main import app
 
 
 @pytest.fixture(autouse=True)
 def disable_rate_limit():
-    with patch.object(RateLimiter, "__call__", new=AsyncMock(return_value=None)):
-        yield
+    async def noop():
+        pass
+
+    app.dependency_overrides[auth_router._auth_rate_limit] = noop
+    yield
+    app.dependency_overrides.pop(auth_router._auth_rate_limit, None)
 
 
 @pytest.fixture
 async def client():
     app.dependency_overrides[get_session] = lambda: MagicMock()
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as c:
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as c:
         yield c
     app.dependency_overrides.clear()
 
@@ -87,7 +93,9 @@ async def test_register_invalid_email(client):
 
 
 async def test_login_success(client):
-    token_dto = TokenDTO(access_token="access.token.here", refresh_token="refresh.token.here")
+    token_dto = TokenDTO(
+        access_token="access.token.here", refresh_token="refresh.token.here"
+    )
     with patch("app.api.routers.auth.Login") as MockLogin:
         MockLogin.return_value.execute = AsyncMock(return_value=token_dto)
         response = await client.post(

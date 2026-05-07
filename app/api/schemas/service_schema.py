@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -10,16 +9,16 @@ class ServiceCreateRequest(BaseModel):
     description: str
     price: float = Field(gt=0)
     duration_minutes: int = Field(default=60, gt=0)
-    category: Optional[str] = None
+    category: str | None = None
 
 
 class ServiceUpdateRequest(BaseModel):
-    title: Optional[str] = None
-    description: Optional[str] = None
-    price: Optional[float] = Field(default=None, gt=0)
-    duration_minutes: Optional[int] = Field(default=None, gt=0)
-    is_active: Optional[bool] = None
-    category: Optional[str] = None
+    title: str | None = None
+    description: str | None = None
+    price: float | None = Field(default=None, gt=0)
+    duration_minutes: int | None = Field(default=None, gt=0)
+    is_active: bool | None = None
+    category: str | None = None
 
 
 class ServiceResponse(BaseModel):
@@ -30,7 +29,7 @@ class ServiceResponse(BaseModel):
     price: float
     duration_minutes: int
     is_active: bool
-    category: Optional[str]
+    category: str | None
     average_rating: float
     total_reviews: int
     created_at: datetime

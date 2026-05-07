@@ -4,10 +4,14 @@ from uuid import UUID
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.dependencies.auth import get_current_user, require_role
+from app.api.dependencies.auth import require_role
 from app.api.dependencies.database import get_session
 from app.api.schemas.pagination import PageParams, PaginatedResponse
-from app.api.schemas.service_schema import ServiceCreateRequest, ServiceResponse, ServiceUpdateRequest
+from app.api.schemas.service_schema import (
+    ServiceCreateRequest,
+    ServiceResponse,
+    ServiceUpdateRequest,
+)
 from app.application.dto.service_dto import ServiceCreateDTO
 from app.application.use_cases.service.create_service import CreateService
 from app.application.use_cases.service.list_services import ListServices
@@ -41,7 +45,12 @@ async def list_services(
     use_case = ListServices(uow=uow, cache=CacheService())
     items = await use_case.execute(offset=params.offset, limit=params.size + 1)
     has_next = len(items) > params.size
-    return PaginatedResponse(items=items[: params.size], page=params.page, size=params.size, has_next=has_next)
+    return PaginatedResponse(
+        items=items[: params.size],
+        page=params.page,
+        size=params.size,
+        has_next=has_next,
+    )
 
 
 @router.get("/{service_id}", response_model=ServiceResponse)

@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import uuid4
 
@@ -14,13 +14,15 @@ from app.main import app
 
 
 def _make_booking_dto(client_id=None, provider_id=None, **kwargs) -> BookingReadDTO:
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     return BookingReadDTO(
         id=kwargs.get("id", uuid4()),
         client_id=client_id or uuid4(),
         service_id=kwargs.get("service_id", uuid4()),
         provider_id=provider_id or uuid4(),
-        scheduled_at=kwargs.get("scheduled_at", datetime(2026, 8, 1, 10, 0, tzinfo=timezone.utc)),
+        scheduled_at=kwargs.get(
+            "scheduled_at", datetime(2026, 8, 1, 10, 0, tzinfo=UTC)
+        ),
         status=kwargs.get("status", BookingStatus.PENDING),
         notes=kwargs.get("notes", None),
         total_price=kwargs.get("total_price", 50.0),
@@ -33,7 +35,9 @@ def _make_booking_dto(client_id=None, provider_id=None, **kwargs) -> BookingRead
 async def client_user_client(sample_user):
     app.dependency_overrides[get_session] = lambda: MagicMock()
     app.dependency_overrides[get_current_user] = lambda: sample_user
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as c:
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as c:
         yield c
     app.dependency_overrides.clear()
 
@@ -43,7 +47,9 @@ async def provider_user_client(sample_user):
     sample_user.role = Role.PROVIDER
     app.dependency_overrides[get_session] = lambda: MagicMock()
     app.dependency_overrides[get_current_user] = lambda: sample_user
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as c:
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as c:
         yield c
     app.dependency_overrides.clear()
 
@@ -51,7 +57,9 @@ async def provider_user_client(sample_user):
 @pytest.fixture
 async def anon_client():
     app.dependency_overrides[get_session] = lambda: MagicMock()
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as c:
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as c:
         yield c
     app.dependency_overrides.clear()
 
@@ -95,7 +103,9 @@ async def test_list_bookings_as_client(client_user_client, sample_user):
     mock_uow_inst.__aenter__ = AsyncMock(return_value=mock_uow_inst)
     mock_uow_inst.__aexit__ = AsyncMock(return_value=False)
     mock_uow_inst.bookings.get_by_client = AsyncMock(return_value=[booking_dto])
-    with patch("app.api.routers.bookings.SQLAlchemyUnitOfWork", return_value=mock_uow_inst):
+    with patch(
+        "app.api.routers.bookings.SQLAlchemyUnitOfWork", return_value=mock_uow_inst
+    ):
         response = await client_user_client.get("/bookings/")
     assert response.status_code == 200
     assert len(response.json()["items"]) == 1

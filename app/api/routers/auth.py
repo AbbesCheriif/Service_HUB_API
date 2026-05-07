@@ -5,23 +5,34 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies.database import get_session
-from app.api.schemas.auth_schema import LoginRequest, RefreshRequest, RegisterRequest, TokenResponse
+from app.api.schemas.auth_schema import (
+    LoginRequest,
+    RefreshRequest,
+    RegisterRequest,
+    TokenResponse,
+)
 from app.application.dto.user_dto import UserCreateDTO, UserReadDTO
 from app.application.use_cases.auth.login import Login
 from app.application.use_cases.auth.register import Register
 from app.core.middleware.rate_limiter import RateLimiter
-from app.domain.exceptions import InvalidCredentials
 from app.infrastructure.auth.jwt_service import JWTService
 from app.infrastructure.auth.password_service import PasswordService
 from app.infrastructure.database.unit_of_work import SQLAlchemyUnitOfWork
-from app.infrastructure.repositories.user_repository_impl import SQLAlchemyUserRepository
+from app.infrastructure.repositories.user_repository_impl import (
+    SQLAlchemyUserRepository,
+)
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 _auth_rate_limit = RateLimiter(max_requests=5, window_seconds=60)
 
 
-@router.post("/register", response_model=UserReadDTO, status_code=status.HTTP_201_CREATED, dependencies=[Depends(_auth_rate_limit)])
+@router.post(
+    "/register",
+    response_model=UserReadDTO,
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(_auth_rate_limit)],
+)
 async def register(
     payload: RegisterRequest,
     session: Annotated[AsyncSession, Depends(get_session)],
@@ -37,15 +48,21 @@ async def register(
     return await use_case.execute(dto)
 
 
-@router.post("/login", response_model=TokenResponse, dependencies=[Depends(_auth_rate_limit)])
+@router.post(
+    "/login", response_model=TokenResponse, dependencies=[Depends(_auth_rate_limit)]
+)
 async def login(
     payload: LoginRequest,
     session: Annotated[AsyncSession, Depends(get_session)],
 ):
     uow = SQLAlchemyUnitOfWork(session)
-    use_case = Login(uow=uow, password_service=PasswordService(), jwt_service=JWTService())
+    use_case = Login(
+        uow=uow, password_service=PasswordService(), jwt_service=JWTService()
+    )
     result = await use_case.execute(payload.email, payload.password)
-    return TokenResponse(access_token=result.access_token, refresh_token=result.refresh_token)
+    return TokenResponse(
+        access_token=result.access_token, refresh_token=result.refresh_token
+    )
 
 
 @router.post("/refresh", response_model=TokenResponse)

@@ -2,7 +2,10 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from app.api.exception_handlers import domain_exception_handler, unhandled_exception_handler
+from app.api.exception_handlers import (
+    domain_exception_handler,
+    unhandled_exception_handler,
+)
 from app.api.routers import admin, auth, bookings, files, services, users
 from app.core.config.settings import get_settings
 from app.core.logging.logger import configure_logging

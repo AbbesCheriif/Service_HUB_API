@@ -1,4 +1,3 @@
-from typing import Optional
 from uuid import UUID
 
 from fastapi import BackgroundTasks
@@ -7,8 +6,12 @@ from app.application.dto.booking_dto import BookingCreateDTO, BookingReadDTO
 from app.application.dto.mappers import booking_to_dto, dto_to_booking
 from app.application.interfaces.unit_of_work import UnitOfWork
 from app.domain.exceptions import BookingConflict, ServiceNotFound
-from app.infrastructure.background.booking_notification_task import notify_provider_new_booking
-from app.infrastructure.background.stats_task import schedule_provider_stats_recalculation
+from app.infrastructure.background.booking_notification_task import (
+    notify_provider_new_booking,
+)
+from app.infrastructure.background.stats_task import (
+    schedule_provider_stats_recalculation,
+)
 
 
 class CreateBooking:
@@ -19,7 +22,7 @@ class CreateBooking:
         self,
         dto: BookingCreateDTO,
         client_id: UUID,
-        background_tasks: Optional[BackgroundTasks] = None,
+        background_tasks: BackgroundTasks | None = None,
     ) -> BookingReadDTO:
         async with self._uow:
             service = await self._uow.services.get_by_id(dto.service_id)

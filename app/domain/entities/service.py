@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from typing import Optional
 from uuid import UUID, uuid4
 
 from app.domain.entities.base import BaseEntity
@@ -13,6 +12,6 @@ class Service(BaseEntity):
     price: float = 0.0
     duration_minutes: int = 60
     is_active: bool = True
-    category: Optional[str] = None
+    category: str | None = None
     average_rating: float = 0.0
     total_reviews: int = 0

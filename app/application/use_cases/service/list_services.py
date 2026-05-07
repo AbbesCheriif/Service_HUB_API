@@ -19,5 +19,7 @@ class ListServices:
             services = await self._uow.services.list_active(offset=offset, limit=limit)
             dtos = [service_to_dto(s) for s in services]
 
-        await self._cache.set(cache_key, [dto.model_dump(mode="json") for dto in dtos], ttl=300)
+        await self._cache.set(
+            cache_key, [dto.model_dump(mode="json") for dto in dtos], ttl=300
+        )
         return dtos

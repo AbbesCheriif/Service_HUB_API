@@ -1,4 +1,3 @@
-from typing import Optional
 from uuid import UUID
 
 from sqlalchemy import select
@@ -15,18 +14,24 @@ class SQLAlchemyUserRepository(UserRepository):
     def __init__(self, session: AsyncSession) -> None:
         self._session = session
 
-    async def get_by_id(self, user_id: UUID) -> Optional[User]:
-        result = await self._session.execute(select(UserModel).where(UserModel.id == user_id))
+    async def get_by_id(self, user_id: UUID) -> User | None:
+        result = await self._session.execute(
+            select(UserModel).where(UserModel.id == user_id)
+        )
         model = result.scalar_one_or_none()
         return self._to_entity(model) if model else None
 
-    async def get_by_email(self, email: str) -> Optional[User]:
-        result = await self._session.execute(select(UserModel).where(UserModel.email == email))
+    async def get_by_email(self, email: str) -> User | None:
+        result = await self._session.execute(
+            select(UserModel).where(UserModel.email == email)
+        )
         model = result.scalar_one_or_none()
         return self._to_entity(model) if model else None
 
     async def save(self, user: User) -> User:
-        result = await self._session.execute(select(UserModel).where(UserModel.id == user.id))
+        result = await self._session.execute(
+            select(UserModel).where(UserModel.id == user.id)
+        )
         model = result.scalar_one_or_none()
         if model is None:
             model = self._to_model(user)
@@ -43,13 +48,17 @@ class SQLAlchemyUserRepository(UserRepository):
         return self._to_entity(model)
 
     async def delete(self, user_id: UUID) -> None:
-        result = await self._session.execute(select(UserModel).where(UserModel.id == user_id))
+        result = await self._session.execute(
+            select(UserModel).where(UserModel.id == user_id)
+        )
         model = result.scalar_one_or_none()
         if model:
             await self._session.delete(model)
 
     async def list_all(self, offset: int = 0, limit: int = 20) -> list[User]:
-        result = await self._session.execute(select(UserModel).offset(offset).limit(limit))
+        result = await self._session.execute(
+            select(UserModel).offset(offset).limit(limit)
+        )
         return [self._to_entity(m) for m in result.scalars().all()]
 
     def _to_entity(self, model: UserModel) -> User:

@@ -1,5 +1,5 @@
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from uuid import uuid4
 
 import pytest
@@ -11,7 +11,9 @@ from app.domain.entities.user import User
 from app.domain.value_objects.email import Email
 from app.domain.value_objects.role import Role
 from app.infrastructure.database.models.base import Base
-from app.infrastructure.repositories.user_repository_impl import SQLAlchemyUserRepository
+from app.infrastructure.repositories.user_repository_impl import (
+    SQLAlchemyUserRepository,
+)
 
 TEST_DATABASE_URL = os.getenv(
     "TEST_DATABASE_URL",
@@ -34,7 +36,9 @@ async def test_engine():
 
 @pytest_asyncio.fixture
 async def session(test_engine):
-    factory = async_sessionmaker(test_engine, class_=AsyncSession, expire_on_commit=False)
+    factory = async_sessionmaker(
+        test_engine, class_=AsyncSession, expire_on_commit=False
+    )
     async with factory() as s:
         yield s
         await s.rollback()
@@ -46,7 +50,7 @@ async def repo(session):
 
 
 def _make_user(**kwargs) -> User:
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     defaults = dict(
         id=uuid4(),
         email=Email(f"user_{uuid4().hex[:8]}@example.com"),

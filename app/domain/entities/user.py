@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from typing import Optional
 
 from app.domain.entities.base import BaseEntity
 from app.domain.value_objects.email import Email
@@ -13,4 +12,4 @@ class User(BaseEntity):
     hashed_password: str = ""
     role: Role = Role.CLIENT
     is_active: bool = True
-    bio: Optional[str] = None
+    bio: str | None = None

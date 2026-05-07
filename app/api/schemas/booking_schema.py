@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -10,7 +9,7 @@ from app.domain.value_objects.booking_status import BookingStatus
 class BookingCreateRequest(BaseModel):
     service_id: UUID
     scheduled_at: datetime
-    notes: Optional[str] = None
+    notes: str | None = None
 
 
 class BookingResponse(BaseModel):
@@ -20,7 +19,7 @@ class BookingResponse(BaseModel):
     provider_id: UUID
     scheduled_at: datetime
     status: BookingStatus
-    notes: Optional[str]
+    notes: str | None
     total_price: float
     created_at: datetime
     updated_at: datetime

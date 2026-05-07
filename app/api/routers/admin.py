@@ -23,9 +23,15 @@ async def get_stats(
     _: Annotated[User, Depends(require_role(Role.ADMIN))],
     session: Annotated[AsyncSession, Depends(get_session)],
 ):
-    user_count = (await session.execute(select(func.count()).select_from(UserModel))).scalar()
-    service_count = (await session.execute(select(func.count()).select_from(ServiceModel))).scalar()
-    booking_count = (await session.execute(select(func.count()).select_from(BookingModel))).scalar()
+    user_count = (
+        await session.execute(select(func.count()).select_from(UserModel))
+    ).scalar()
+    service_count = (
+        await session.execute(select(func.count()).select_from(ServiceModel))
+    ).scalar()
+    booking_count = (
+        await session.execute(select(func.count()).select_from(BookingModel))
+    ).scalar()
     return {
         "users": user_count,
         "services": service_count,

@@ -1,5 +1,5 @@
 import uuid as uuid_module
-from typing import Annotated, Optional
+from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, status
@@ -27,10 +27,12 @@ class FileUploadResponse(BaseModel):
     filename: str
     content_type: str
     size_bytes: int
-    url: Optional[str]
+    url: str | None
 
 
-@router.post("/upload", response_model=FileUploadResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/upload", response_model=FileUploadResponse, status_code=status.HTTP_201_CREATED
+)
 async def upload_file(
     file: UploadFile,
     current_user: Annotated[User, Depends(get_current_user)],

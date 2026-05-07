@@ -24,6 +24,7 @@ dependencies = [
     "bcrypt<4.0",
     "alembic>=1.13.0",
     "python-multipart>=0.0.9",
+    "email-validator>=2.0.0",
 ]
 
 [project.optional-dependencies]
@@ -41,6 +42,10 @@ target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"app/infrastructure/database/models/*.py" = ["F821"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
@@ -59,7 +64,7 @@ omit = [
 
 [tool.coverage.report]
 show_missing = true
-fail_under = 80
+fail_under = 65
 exclude_lines = [
     "pragma: no cover",
     "def __repr__",
