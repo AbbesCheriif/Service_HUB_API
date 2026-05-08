@@ -97,6 +97,12 @@ docker-compose up --build
 - `GET /admin/stats` — Admin dashboard stats (admin role required)
 - `POST /files/upload` — Upload a file (MIME + size validated)
 
+See [docs/api_examples.md](docs/api_examples.md) for full cURL/HTTP examples and [docs/endpoints.md](docs/endpoints.md) for the complete endpoint reference.
+
+## Architecture
+
+The project follows Clean Architecture with four strict layers (Domain → Application → Infrastructure → API). See [docs/architecture.md](docs/architecture.md) for the full diagram and layer responsibilities.
+
 ## Branch Strategy
 
 ```
