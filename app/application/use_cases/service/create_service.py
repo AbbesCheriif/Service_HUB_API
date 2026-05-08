@@ -1,4 +1,3 @@
-from typing import Optional
 from uuid import UUID
 
 from app.application.dto.mappers import dto_to_service, service_to_dto
@@ -9,7 +8,7 @@ from app.infrastructure.cache.cache_service import CacheService
 
 
 class CreateService:
-    def __init__(self, uow: UnitOfWork, cache: Optional[CacheService] = None) -> None:
+    def __init__(self, uow: UnitOfWork, cache: CacheService | None = None) -> None:
         self._uow = uow
         self._cache = cache
 
