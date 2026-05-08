@@ -1,8 +1,27 @@
 # ServiceHub API
 
-## Overview
+[![CI - Lint](https://github.com/AbbesCheriif/Service_HUB_API/actions/workflows/lint.yml/badge.svg)](https://github.com/AbbesCheriif/Service_HUB_API/actions/workflows/lint.yml)
+[![CI - Tests](https://github.com/AbbesCheriif/Service_HUB_API/actions/workflows/tests.yml/badge.svg)](https://github.com/AbbesCheriif/Service_HUB_API/actions/workflows/tests.yml)
+[![CI - Docker](https://github.com/AbbesCheriif/Service_HUB_API/actions/workflows/docker.yml/badge.svg)](https://github.com/AbbesCheriif/Service_HUB_API/actions/workflows/docker.yml)
 
-ServiceHub allows clients to discover and book services from providers (plumbers, tutors, cleaners, etc.), with a full admin back-office. The codebase is structured around Domain-Driven Design with strict separation between domain, application, infrastructure, and API layers.
+**ServiceHub** is a production-ready REST API for a multi-service booking platform. Clients discover and book services offered by providers (plumbers, tutors, cleaners, …) and an admin back-office manages the whole platform.
+
+Built with **FastAPI**, **PostgreSQL**, and **Redis**, the codebase enforces **Clean Architecture** — domain logic has zero framework dependencies, use cases are fully unit-testable, and infrastructure is swappable behind repository and service interfaces.
+
+---
+
+## Features
+
+- **Auth** — JWT access + refresh tokens, bcrypt password hashing, rate-limited login/register
+- **RBAC** — three roles (CLIENT / PROVIDER / ADMIN) enforced via Strategy pattern
+- **Services** — CRUD with Redis-cached list, pagination
+- **Bookings** — full lifecycle (PENDING → ACCEPTED / CANCELLED), conflict detection, background notifications
+- **File upload** — MIME type + size validation, local storage (swappable via interface)
+- **Structured logging** — JSON logs via structlog, correlation ID on every request
+- **Observability** — `/health` endpoint, `X-Request-ID` header propagated end-to-end
+- **CI/CD** — GitHub Actions: ruff lint, pytest + coverage, Docker build
+
+---
 
 ## Tech Stack
 
@@ -18,7 +37,9 @@ ServiceHub allows clients to discover and book services from providers (plumbers
 | Linting          | ruff                                    |
 | Containerisation | Docker + docker-compose                 |
 
-## Architecture
+---
+
+## Project Structure
 
 ```
 app/
@@ -28,10 +49,16 @@ app/
 ├── api/             # FastAPI routers, schemas, dependencies, exception handlers
 └── core/            # Config, logging, middleware, security strategies
 tests/
-├── unit/
-├── integration/
-└── api/
+├── unit/            # Pure business logic tests (mocked repos)
+├── integration/     # Repository tests against real DB
+└── api/             # End-to-end route tests with httpx
+docs/
+├── architecture.md  # Clean Architecture diagram + layer breakdown
+├── endpoints.md     # Full endpoint reference
+└── api_examples.md  # HTTP request/response examples
 ```
+
+---
 
 ## Getting Started
 
@@ -58,7 +85,7 @@ pip install -e ".[dev]"
 
 # Copy and configure environment variables
 cp .env.example .env
-# Edit .env with your database URL, Redis URL, and secret key
+# Edit .env with your DATABASE_URL, REDIS_URL, and SECRET_KEY
 ```
 
 ### Running the API
@@ -73,45 +100,68 @@ python run.py
 uvicorn app.main:app --reload
 ```
 
-The API will be available at `http://localhost:8000`.
-Interactive docs: `http://localhost:8000/docs`
+- API: `http://localhost:8000`
+- Interactive docs (Swagger UI): `http://localhost:8000/docs`
+- ReDoc: `http://localhost:8000/redoc`
 
-### Running Tests
-
-```bash
-pytest --cov=app --cov-report=term-missing
-```
-
-### Docker
+### Docker (recommended)
 
 ```bash
 docker-compose up --build
 ```
 
-## API Highlights
+Starts the API, PostgreSQL, and Redis with health checks and persistent volumes.
 
-- `POST /auth/register` — Register as client or provider
-- `POST /auth/login` — Obtain JWT access + refresh tokens
-- `GET /services` — Browse available services (paginated, cached)
-- `POST /bookings` — Book a service
-- `GET /admin/stats` — Admin dashboard stats (admin role required)
-- `POST /files/upload` — Upload a file (MIME + size validated)
+### Running Tests
 
-See [docs/api_examples.md](docs/api_examples.md) for full cURL/HTTP examples and [docs/endpoints.md](docs/endpoints.md) for the complete endpoint reference.
+```bash
+# All tests with coverage report
+pytest --cov=app --cov-report=term-missing
 
-## Architecture
+# Unit tests only
+pytest tests/unit/
 
-The project follows Clean Architecture with four strict layers (Domain → Application → Infrastructure → API). See [docs/architecture.md](docs/architecture.md) for the full diagram and layer responsibilities.
+# API tests only
+pytest tests/api/
+```
+
+---
+
+## API Quick Reference
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/auth/register` | No | Register (CLIENT or PROVIDER) |
+| POST | `/auth/login` | No | Login → access + refresh tokens |
+| POST | `/auth/refresh` | No | Refresh access token |
+| GET | `/users/me` | JWT | Current user profile |
+| POST | `/services/` | PROVIDER | Create a service |
+| GET | `/services/` | No | List services (paginated) |
+| POST | `/bookings/` | CLIENT | Book a service |
+| POST | `/bookings/{id}/accept` | PROVIDER | Accept a booking |
+| POST | `/bookings/{id}/cancel` | any | Cancel a booking |
+| POST | `/files/upload` | JWT | Upload a file |
+| GET | `/admin/stats` | ADMIN | Platform statistics |
+| GET | `/health` | No | Health check |
+
+Full documentation:
+- [Architecture](docs/architecture.md)
+- [Endpoint Reference](docs/endpoints.md)
+- [API Examples](docs/api_examples.md)
+
+---
 
 ## Branch Strategy
 
 ```
-main        ← production only
+main        ← production only (merges from develop at stable milestones)
 develop     ← integration branch
 feat/*      ← feature branches
 test/*      ← test branches
 ci/*        ← CI/CD branches
 ```
+
+---
 
 ## License
 
