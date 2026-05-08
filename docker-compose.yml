@@ -5,6 +5,12 @@ services:
       target: production
     container_name: servicehub_app
     env_file: .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-servicehub}
+      REDIS_URL: redis://redis:6379/0
+      DEBUG: "false"
+    command: >
+      sh -c "alembic upgrade head && python run.py"
     ports:
       - "8000:8000"
     volumes:

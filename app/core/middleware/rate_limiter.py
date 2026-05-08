@@ -1,6 +1,8 @@
 import time
 
 from fastapi import HTTPException, status
+from redis.exceptions import ConnectionError as RedisConnectionError
+from redis.exceptions import RedisError
 from starlette.requests import Request
 
 from app.infrastructure.cache.redis_factory import RedisFactory
@@ -12,6 +14,7 @@ class RateLimiter:
     Tracks requests per (route, client IP) using a Redis sorted set.
     Each member is the request timestamp; expired entries are pruned on
     every call so the window always reflects the last `window_seconds`.
+    Falls through silently when Redis is unavailable (no rate limiting applied).
     """
 
     def __init__(self, max_requests: int, window_seconds: int) -> None:
@@ -36,5 +39,9 @@ class RateLimiter:
                 )
             await redis.zadd(key, {str(now): now})
             await redis.expire(key, self.window_seconds)
+        except HTTPException:
+            raise
+        except (RedisConnectionError, RedisError):
+            pass
         finally:
             await redis.aclose()
